@@ -1,0 +1,71 @@
+#sair {
+    position: absolute;
+}
+
+body {
+    background-color: rgb(220, 249, 249);
+
+    main {
+        height: 100vh;
+        align-items: center;
+
+        .container {
+            display: flex;
+            height: 100%;
+            align-items: center;
+            justify-content: center;
+
+            .tabuleiro {
+                display: flex;
+                flex-wrap: wrap;
+                width: 85%;
+                height: 90%;
+
+                border: 20px solid brown;
+                border-radius: 10px;
+
+                .espaco {
+                    display: flex;
+                    width: calc(100%/8);
+                    height: calc(100%/8);
+
+                    justify-content: center;
+                    align-items: center;
+
+                    &:hover {
+                        cursor: pointer;
+                    }
+                    
+                    &.d {
+                        background-color: white;
+                    }
+                    &.e {
+                        background-color: gray;
+                    }
+
+                    & .peca {
+                        width: 40%;
+                        height: 80%;
+                        border-radius: 50%;
+                        
+                        &.a {
+                            background-color: red;
+                        }
+
+                        &.b {
+                            background-color: blue;
+                        }
+
+                    }
+
+                    
+                }
+            }
+        }
+
+
+
+    }
+
+    
+}

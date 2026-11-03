@@ -1,0 +1,54 @@
+#sair {
+  position: absolute;
+}
+
+body {
+  background-color: rgb(220, 249, 249);
+}
+body main {
+  height: 100vh;
+  align-items: center;
+}
+body main .container {
+  display: flex;
+  height: 100%;
+  align-items: center;
+  justify-content: center;
+}
+body main .container .tabuleiro {
+  display: flex;
+  flex-wrap: wrap;
+  width: 85%;
+  height: 90%;
+  border: 20px solid brown;
+  border-radius: 10px;
+}
+body main .container .tabuleiro .espaco {
+  display: flex;
+  width: 12.5%;
+  height: 12.5%;
+  justify-content: center;
+  align-items: center;
+}
+body main .container .tabuleiro .espaco:hover {
+  cursor: pointer;
+}
+body main .container .tabuleiro .espaco.d {
+  background-color: white;
+}
+body main .container .tabuleiro .espaco.e {
+  background-color: gray;
+}
+body main .container .tabuleiro .espaco .peca {
+  width: 40%;
+  height: 80%;
+  border-radius: 50%;
+}
+body main .container .tabuleiro .espaco .peca.a {
+  background-color: red;
+}
+body main .container .tabuleiro .espaco .peca.b {
+  background-color: blue;
+}
+
+/*# sourceMappingURL=damas.css.map */
