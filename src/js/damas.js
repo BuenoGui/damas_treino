@@ -62,7 +62,7 @@ function criar_times() {
             // coloca as peças nas casas impares até a 3
             for(let j = 1; j <= 2; j = j = j+2) {
                 const linha_atual = coluna_atual.getElementsByClassName(`${tabuleiro.linhas[j]}`)[0]
-                linha_atual.innerHTML = `<span class="peca a"></span>`
+                linha_atual.innerHTML = `<span class="peca b"></span>`
             }            
         }
         // se for impar
@@ -70,7 +70,7 @@ function criar_times() {
             // coloca as peças nas casas pares até a 3
             for(let j = 0; j <= 2; j = j = j+2) {
                 const linha_atual = coluna_atual.getElementsByClassName(`${tabuleiro.linhas[j]}`)[0]
-                linha_atual.innerHTML = `<span class="peca a"></span>`
+                linha_atual.innerHTML = `<span class="peca b"></span>`
             } 
         }
 
@@ -84,7 +84,7 @@ function criar_times() {
             // coloca as peças nas casas impares até a 3
             for(let j = 7; j >= 5; j = j-2) {
                 const linha_atual = coluna_atual.getElementsByClassName(`${tabuleiro.linhas[j]}`)[0]
-                linha_atual.innerHTML = `<span class="peca b"></span>`
+                linha_atual.innerHTML = `<span class="peca a"></span>`
             }            
         }
         // se for impar
@@ -92,7 +92,7 @@ function criar_times() {
             // coloca as peças nas casas pares de 7   
             for(let j = 6; j >= 5; j = j-2) {
                 const linha_atual = coluna_atual.getElementsByClassName(`${tabuleiro.linhas[j]}`)[0]
-                linha_atual.innerHTML = `<span class="peca b"></span>`
+                linha_atual.innerHTML = `<span class="peca a"></span>`
             } 
         }
 
@@ -108,9 +108,15 @@ function iniciar() {
 
 iniciar()
 
+let ultima_peca_clicada = null
+let time_a_jogar = "a"
+
 document_tabuleiro.addEventListener('click', function(event) {
+    // se for peça, pinta os movimentos possiveis
     if(event.target.classList.contains("peca")) {
-        const peca_clicada = event.target.classList
+
+        ultima_peca_clicada = event.target
+
         const document_linha_atual = event.target.parentElement
         const document_coluna_atual = event.target.parentElement.parentElement
 
@@ -118,18 +124,38 @@ document_tabuleiro.addEventListener('click', function(event) {
         const coluna_atual = document_coluna_atual.classList[1]
 
         //movimentação peca time A
-        if(peca_clicada[1] === "a") {
+        if(time_a_jogar === "a") {
             placeholder(linha_atual, coluna_atual, times.time_a)
         }
-        if(peca_clicada[1] === "b") {
+        //movimentação peca time B
+        if(time_a_jogar === "b") {
             placeholder(linha_atual, coluna_atual, times.time_b)
         }
+
+    } // mover peça 
+    else if (event.target.classList.contains("selecionada")) {
+
+        // coloca a peca no local novo
+        event.target.innerHTML += `<span class="peca ${String(time_a_jogar)}"></span>`
+
+        // limpa filtro vermelho
+        const tabuleiro_atual = event.target.parentElement.parentElement
+        const espacos_selecionados = tabuleiro_atual.getElementsByClassName("selecionada")
+        for(let i = 0; i <= espacos_selecionados.length ; i++) {
+            // eu não acredito nisso que eu fiz
+            espacos_selecionados[i - i].classList.remove("selecionada")
+        }
+
+        // remove peça do local antigo
+        ultima_peca_clicada.parentElement.innerHTML = ""
+           
     }
+
 })
 
 const times = {
-    time_a: 0,
-    time_b: -2
+    time_a: -2,
+    time_b: 0
 }
 
 function placeholder(linha_atual, coluna_atual, time_jogador) {
@@ -153,61 +179,8 @@ function placeholder(linha_atual, coluna_atual, time_jogador) {
         }
 
         }
-        console.log(linha_atual + coluna_atual)
+        return linha_atual + coluna_atual
 }
-
-// function placeholder_peca_a(linha_atual, coluna_atual) {
-//     if(linha_atual <= 7) {
-//         const linha_movimento = Number(linha_atual)
-//         const indice_coluna_atual = tabuleiro.colunas.indexOf(coluna_atual)
-
-//         const coluna_anterior = document_tabuleiro.getElementsByClassName(`${tabuleiro.colunas[indice_coluna_atual - 1]}`)[0]
-//         const coluna_sucessor = document_tabuleiro.getElementsByClassName(`${tabuleiro.colunas[indice_coluna_atual + 1]}`)[0]
-
-//         if(coluna_atual !== "A" && coluna_atual !==  "H") {
-//             const linha_mov_1 = coluna_anterior.getElementsByClassName(`${tabuleiro.linhas[linha_movimento]}`)[0]
-//             const linha_mov_2 = coluna_sucessor.getElementsByClassName(`${tabuleiro.linhas[linha_movimento]}`)[0]
-//             pinta_movimento(linha_mov_1, linha_mov_2)
-//         } else if(coluna_atual === "A"){
-//             const linha_mov = coluna_sucessor.getElementsByClassName(`${tabuleiro.linhas[linha_movimento]}`)[0]
-//             pinta_movimento(linha_mov)
-//         } else if(coluna_atual === "H") {
-//             const linha_mov = coluna_anterior.getElementsByClassName(`${tabuleiro.linhas[linha_movimento]}`)[0]
-//             console.log(linha_mov)
-//             pinta_movimento(linha_mov)
-//         }
-
-//         } 
-
-//         console.log(linha_atual + coluna_atual)
-// }
-
-// function placeholder_peca_b(linha_atual, coluna_atual) {
-//     if(linha_atual <= 7) {
-//         const linha_movimento = Number(linha_atual - 2)
-//         const indice_coluna_atual = tabuleiro.colunas.indexOf(coluna_atual)
-
-//         const coluna_anterior = document_tabuleiro.getElementsByClassName(`${tabuleiro.colunas[indice_coluna_atual - 1]}`)[0]
-//         const coluna_sucessor = document_tabuleiro.getElementsByClassName(`${tabuleiro.colunas[indice_coluna_atual + 1]}`)[0]
-
-//         if(coluna_atual !== "A" && coluna_atual !==  "H") {
-//             const linha_mov_1 = coluna_anterior.getElementsByClassName(`${tabuleiro.linhas[linha_movimento]}`)[0]
-//             const linha_mov_2 = coluna_sucessor.getElementsByClassName(`${tabuleiro.linhas[linha_movimento]}`)[0]
-//             pinta_movimento(linha_mov_1, linha_mov_2)
-//         } else if(coluna_atual === "A"){
-//             const linha_mov = coluna_sucessor.getElementsByClassName(`${tabuleiro.linhas[linha_movimento]}`)[0]
-//             pinta_movimento(linha_mov)
-//         } else if(coluna_atual === "H") {
-//             const linha_mov = coluna_anterior.getElementsByClassName(`${tabuleiro.linhas[linha_movimento]}`)[0]
-//             console.log(linha_mov)
-//             pinta_movimento(linha_mov)
-//         }
-
-//         } 
-
-//         console.log(linha_atual + coluna_atual)
-// }
-
 
 function pinta_movimento(linha_mov_1, linha_mov_2) {
     if(linha_mov_1 && linha_mov_2) {
