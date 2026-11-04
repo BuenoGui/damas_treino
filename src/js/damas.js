@@ -113,43 +113,52 @@ let time_a_jogar = "a"
 
 document_tabuleiro.addEventListener('click', function(event) {
     // se for peça, pinta os movimentos possiveis
-    if(event.target.classList.contains("peca")) {
+    if(event.target.classList.contains("peca") &&
+        event.target.classList.contains(`${time_a_jogar}`)) 
+        {
+            ultima_peca_clicada = event.target
 
-        ultima_peca_clicada = event.target
+            const document_linha_atual = event.target.parentElement
+            const document_coluna_atual = event.target.parentElement.parentElement
 
-        const document_linha_atual = event.target.parentElement
-        const document_coluna_atual = event.target.parentElement.parentElement
+            const linha_atual = document_linha_atual.classList[1]
+            const coluna_atual = document_coluna_atual.classList[1]
 
-        const linha_atual = document_linha_atual.classList[1]
-        const coluna_atual = document_coluna_atual.classList[1]
+            console.log(event.target.classList.contains(`${time_a_jogar}`))
 
-        //movimentação peca time A
-        if(time_a_jogar === "a") {
-            placeholder(linha_atual, coluna_atual, times.time_a)
+            //movimentação peca time A
+            if(time_a_jogar === "a") {
+                placeholder(linha_atual, coluna_atual, times.time_a)
+            }
+            //movimentação peca time B
+            if(time_a_jogar === "b") {
+                placeholder(linha_atual, coluna_atual, times.time_b)
+            }
+
+        } // mover peça 
+            else if (event.target.classList.contains("selecionada")) {
+
+                // coloca a peca no local novo
+                event.target.innerHTML += `<span class="peca ${String(time_a_jogar)}"></span>`
+
+                // limpa filtro vermelho
+                const tabuleiro_atual = event.target.parentElement.parentElement
+                const espacos_selecionados = tabuleiro_atual.getElementsByClassName("selecionada")
+                for(let i = 0; i <= espacos_selecionados.length ; i++) {
+                    // eu não acredito nisso que eu fiz
+                    espacos_selecionados[i - i].classList.remove("selecionada")
+                }
+
+                // remove peça do local antigo
+                ultima_peca_clicada.parentElement.innerHTML = ""
+
+                if(time_a_jogar === "a") {
+                    time_a_jogar = "b"
+                } else {
+                    time_a_jogar = "a"
+                }
+            
         }
-        //movimentação peca time B
-        if(time_a_jogar === "b") {
-            placeholder(linha_atual, coluna_atual, times.time_b)
-        }
-
-    } // mover peça 
-    else if (event.target.classList.contains("selecionada")) {
-
-        // coloca a peca no local novo
-        event.target.innerHTML += `<span class="peca ${String(time_a_jogar)}"></span>`
-
-        // limpa filtro vermelho
-        const tabuleiro_atual = event.target.parentElement.parentElement
-        const espacos_selecionados = tabuleiro_atual.getElementsByClassName("selecionada")
-        for(let i = 0; i <= espacos_selecionados.length ; i++) {
-            // eu não acredito nisso que eu fiz
-            espacos_selecionados[i - i].classList.remove("selecionada")
-        }
-
-        // remove peça do local antigo
-        ultima_peca_clicada.parentElement.innerHTML = ""
-           
-    }
 
 })
 
