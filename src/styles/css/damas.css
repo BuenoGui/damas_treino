@@ -14,6 +14,10 @@ body main {
   display: flex;
 }
 
+.selecionada:hover {
+  cursor: pointer;
+}
+
 .container {
   height: 100%;
   align-items: center;
@@ -45,6 +49,9 @@ body main {
 .coluna .linha.c {
   background-color: gray;
 }
+.coluna .linha.selecionada {
+  background-color: red;
+}
 .coluna .linha .peca {
   width: 80%;
   height: 85%;
@@ -54,10 +61,10 @@ body main {
   cursor: pointer;
 }
 .coluna .linha .peca.a {
-  background-color: red;
+  background-color: white;
 }
 .coluna .linha .peca.b {
-  background-color: blue;
+  background-color: black;
 }
 
 /*# sourceMappingURL=damas.css.map */

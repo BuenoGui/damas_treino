@@ -12,7 +12,6 @@ const tabuleiro = {
 
 const document_tabuleiro = document.getElementsByClassName("tabuleiro")[0]
 
-
 // cria tabuleiro
 function criar_tabuleiro() {
     for(let i=0; i < 8; i++) {
@@ -109,7 +108,6 @@ function iniciar() {
 
 iniciar()
 
-
 document_tabuleiro.addEventListener('click', function(event) {
     if(event.target.classList.contains("peca")) {
         const peca_clicada = event.target.classList
@@ -121,29 +119,116 @@ document_tabuleiro.addEventListener('click', function(event) {
 
         //movimentação peca time A
         if(peca_clicada[1] === "a") {
-            placeholder_peca_a(linha_atual, coluna_atual)
+            placeholder(linha_atual, coluna_atual, times.time_a)
+        }
+        if(peca_clicada[1] === "b") {
+            placeholder(linha_atual, coluna_atual, times.time_b)
         }
     }
 })
 
-function placeholder_peca_a(linha_atual, coluna_atual) {
-    if(linha_atual <= 7) {
-        const linha_movimento = Number(linha_atual) + 1
-        console.log("casas a pintar na linha: " + linha_movimento)
+const times = {
+    time_a: 0,
+    time_b: -2
+}
+
+function placeholder(linha_atual, coluna_atual, time_jogador) {
+    if(linha_atual <= tabuleiro.colunas.length - 1) {
+        const linha_movimento = Number(linha_atual) + time_jogador
+        const indice_coluna_atual = tabuleiro.colunas.indexOf(coluna_atual)
+
+        const coluna_anterior = document_tabuleiro.getElementsByClassName(`${tabuleiro.colunas[indice_coluna_atual - 1]}`)[0]
+        const coluna_sucessor = document_tabuleiro.getElementsByClassName(`${tabuleiro.colunas[indice_coluna_atual + 1]}`)[0]
 
         if(coluna_atual !== "A" && coluna_atual !==  "H") {
-            const indice_coluna_atual = tabuleiro.colunas.indexOf(coluna_atual)
-            console.log("indice da coluna: " + indice_coluna_atual)
-
-            // 
-            // NOS INDICES +1 e -1 de colunas
-            // PINTAR AS LINHAS com valor = "LINHA_MOVIMENTO"
-            //  
-
-            
+            const linha_mov_1 = coluna_anterior.getElementsByClassName(`${tabuleiro.linhas[linha_movimento]}`)[0]
+            const linha_mov_2 = coluna_sucessor.getElementsByClassName(`${tabuleiro.linhas[linha_movimento]}`)[0]
+            pinta_movimento(linha_mov_1, linha_mov_2)
+        } else if(coluna_atual === "A"){
+            const linha_mov = coluna_sucessor.getElementsByClassName(`${tabuleiro.linhas[linha_movimento]}`)[0]
+            pinta_movimento(linha_mov)
+        } else if(coluna_atual === "H") {
+            const linha_mov = coluna_anterior.getElementsByClassName(`${tabuleiro.linhas[linha_movimento]}`)[0]
+            pinta_movimento(linha_mov)
+        }
 
         }
-    }
+        console.log(linha_atual + coluna_atual)
+}
 
-    console.log(linha_atual + coluna_atual)
+// function placeholder_peca_a(linha_atual, coluna_atual) {
+//     if(linha_atual <= 7) {
+//         const linha_movimento = Number(linha_atual)
+//         const indice_coluna_atual = tabuleiro.colunas.indexOf(coluna_atual)
+
+//         const coluna_anterior = document_tabuleiro.getElementsByClassName(`${tabuleiro.colunas[indice_coluna_atual - 1]}`)[0]
+//         const coluna_sucessor = document_tabuleiro.getElementsByClassName(`${tabuleiro.colunas[indice_coluna_atual + 1]}`)[0]
+
+//         if(coluna_atual !== "A" && coluna_atual !==  "H") {
+//             const linha_mov_1 = coluna_anterior.getElementsByClassName(`${tabuleiro.linhas[linha_movimento]}`)[0]
+//             const linha_mov_2 = coluna_sucessor.getElementsByClassName(`${tabuleiro.linhas[linha_movimento]}`)[0]
+//             pinta_movimento(linha_mov_1, linha_mov_2)
+//         } else if(coluna_atual === "A"){
+//             const linha_mov = coluna_sucessor.getElementsByClassName(`${tabuleiro.linhas[linha_movimento]}`)[0]
+//             pinta_movimento(linha_mov)
+//         } else if(coluna_atual === "H") {
+//             const linha_mov = coluna_anterior.getElementsByClassName(`${tabuleiro.linhas[linha_movimento]}`)[0]
+//             console.log(linha_mov)
+//             pinta_movimento(linha_mov)
+//         }
+
+//         } 
+
+//         console.log(linha_atual + coluna_atual)
+// }
+
+// function placeholder_peca_b(linha_atual, coluna_atual) {
+//     if(linha_atual <= 7) {
+//         const linha_movimento = Number(linha_atual - 2)
+//         const indice_coluna_atual = tabuleiro.colunas.indexOf(coluna_atual)
+
+//         const coluna_anterior = document_tabuleiro.getElementsByClassName(`${tabuleiro.colunas[indice_coluna_atual - 1]}`)[0]
+//         const coluna_sucessor = document_tabuleiro.getElementsByClassName(`${tabuleiro.colunas[indice_coluna_atual + 1]}`)[0]
+
+//         if(coluna_atual !== "A" && coluna_atual !==  "H") {
+//             const linha_mov_1 = coluna_anterior.getElementsByClassName(`${tabuleiro.linhas[linha_movimento]}`)[0]
+//             const linha_mov_2 = coluna_sucessor.getElementsByClassName(`${tabuleiro.linhas[linha_movimento]}`)[0]
+//             pinta_movimento(linha_mov_1, linha_mov_2)
+//         } else if(coluna_atual === "A"){
+//             const linha_mov = coluna_sucessor.getElementsByClassName(`${tabuleiro.linhas[linha_movimento]}`)[0]
+//             pinta_movimento(linha_mov)
+//         } else if(coluna_atual === "H") {
+//             const linha_mov = coluna_anterior.getElementsByClassName(`${tabuleiro.linhas[linha_movimento]}`)[0]
+//             console.log(linha_mov)
+//             pinta_movimento(linha_mov)
+//         }
+
+//         } 
+
+//         console.log(linha_atual + coluna_atual)
+// }
+
+
+function pinta_movimento(linha_mov_1, linha_mov_2) {
+    if(linha_mov_1 && linha_mov_2) {
+
+        if(!linha_mov_1.classList.contains("selecionada") &&
+            !linha_mov_2.classList.contains("selecionada")) {
+                linha_mov_1.classList.add("selecionada")
+                linha_mov_2.classList.add("selecionada")
+                return
+        } else {
+                linha_mov_1.classList.remove("selecionada")
+                linha_mov_2.classList.remove("selecionada")
+                return
+        }
+
+    } else {
+        if(!linha_mov_1.classList.contains("selecionada")) {
+                linha_mov_1.classList.add("selecionada")
+        } else {
+                linha_mov_1.classList.remove("selecionada")
+        }
+        return
+    }
 }

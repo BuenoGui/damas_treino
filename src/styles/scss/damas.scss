@@ -17,6 +17,10 @@ body {
     display: flex;
 }
 
+.selecionada:hover {
+    cursor: pointer;
+    }
+
 .container {
     
     height: 100%;
@@ -52,6 +56,10 @@ body {
         background-color: gray;
     }
 
+    &.selecionada {
+        background-color: red;
+    }
+
     & .peca {
         width: 80%;
         height: 85%;
@@ -62,11 +70,11 @@ body {
         }
                     
         &.a {
-            background-color: red;
+            background-color: white;
         }
 
         &.b {
-            background-color: blue;
+            background-color: black;
         }
 
     }
