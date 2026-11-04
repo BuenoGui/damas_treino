@@ -9,45 +9,54 @@ body main {
   height: 100vh;
   align-items: center;
 }
-body main .container {
+
+.container, .tabuleiro, .coluna, .linha {
   display: flex;
+}
+
+.container {
   height: 100%;
   align-items: center;
   justify-content: center;
 }
-body main .container .tabuleiro {
-  display: flex;
+
+.tabuleiro {
   flex-wrap: wrap;
-  width: 85%;
-  height: 90%;
+  width: 584px;
+  height: 584px;
   border: 20px solid brown;
   border-radius: 10px;
 }
-body main .container .tabuleiro .espaco {
-  display: flex;
+
+.coluna {
   width: 12.5%;
-  height: 12.5%;
+  height: 100%;
+  flex-direction: column;
+}
+.coluna .linha {
+  width: 100%;
+  height: 100%;
   justify-content: center;
   align-items: center;
 }
-body main .container .tabuleiro .espaco:hover {
-  cursor: pointer;
-}
-body main .container .tabuleiro .espaco.d {
+.coluna .linha.b {
   background-color: white;
 }
-body main .container .tabuleiro .espaco.e {
+.coluna .linha.c {
   background-color: gray;
 }
-body main .container .tabuleiro .espaco .peca {
-  width: 40%;
-  height: 80%;
-  border-radius: 50%;
+.coluna .linha .peca {
+  width: 80%;
+  height: 85%;
+  border-radius: 100%;
 }
-body main .container .tabuleiro .espaco .peca.a {
+.coluna .linha .peca:hover {
+  cursor: pointer;
+}
+.coluna .linha .peca.a {
   background-color: red;
 }
-body main .container .tabuleiro .espaco .peca.b {
+.coluna .linha .peca.b {
   background-color: blue;
 }
 
