@@ -4,161 +4,178 @@ btn_sair.addEventListener("click", function(){
     window.location.href = "../../index.html"
 })
 
-const tabuleiro = {
-    colunas: ["A", "B", "C", "D", "E", "F", "G", "H"],
-    linhas : ["1","2","3","4","5","6","7","8"]
-
-}
-
 const document_tabuleiro = document.getElementsByClassName("tabuleiro")[0]
 
-// cria tabuleiro
-function criar_tabuleiro() {
-    for(let i=0; i < 8; i++) {
-        document_tabuleiro.innerHTML += `<div class="coluna ${tabuleiro.colunas[i]}"></div>`
-        const coluna_atual = document.getElementsByClassName(`${tabuleiro.colunas[i]}`)[0]
-        for(let j=0; j < 8; j++) {
-            coluna_atual.innerHTML += `<div class="linha ${tabuleiro.linhas[j]}"></div>`
+const direcao = {
+    a: -1,
+    b: 0
+}
+
+const tabuleiro = {
+    colunas: ["A", "B", "C", "D", "E", "F", "G", "H"],
+    linhas: ["0", "1", "2", "3", "4", "5", "6", "7"]
+}
+
+class Jogo {
+    constructor() {
+        this.estado = []
+        this.time_a_jogar = "a"
+        this.criar_times()
+    }
+
+    criar_times() {
+        this.estado = []
+        for(let l = 0; l < 8; l++) {
+            const linha = []
+            for(let c = 0; c < 8; c++) {
+                let peca = null
+                if((l + c) % 2 === 1) {
+                    if(l <= 2) peca = "b"
+                    if(l >= 5) peca = "a"
+                }
+                linha.push(peca)
+            }
+            this.estado.push(linha)
+        }
+    }
+
+    dentro_tabuleiro(linha, coluna) {
+        return linha >=0 && linha < 8 && coluna >=0 && coluna < 8
+    }
+
+    movimentos_simples(linha, coluna) {
+        const peca = this.estado[linha][coluna]
+        const lista = []
+
+        if(!peca) return lista 
+
+        for(const direcao_diagonal of [-1,1]) {
+            const nova_coluna = linha + direcao[peca]
+            const nc = coluna + direcao_diagonal
+
+            if(this.dentro_tabuleiro(nova_coluna, nc) && this.estado[nova_coluna][nc] === null) {
+                lista.push({linha: nova_coluna, coluna:nc, captura:null})
+            }
+        }
+        return lista
+    }
+
+    jogada_valida(linha, coluna) {
+        if(this.estado[linha][coluna] !== this.time_a_jogar) return []
+        return this.movimentos_simples(linha, coluna)
+    }
+
+    mover(origem, destino) {
+        const jogada = this.jogada_valida(origem.linha, origem.coluna)
+        .find(j => j.linha === destino.linha && j.coluna === destino.coluna)
+        if(!jogada) { return null }
+
+        this.estado[destino.linha][destino.coluna] = this.estado[origem.linha][origem.coluna]
+        this.estado[origem.linha][origem.coluna] = null
+        this.trocar_turno()
+        return jogada
+
+    }
+
+    trocar_turno() {
+        this.time_a_jogar = this.time_a_jogar === "a" ? "b" : "a"
+    }
+    
+}
+
+class Tela {
+    constructor(container) {
+        this.container = container
+        this.casas = Array.from({ length: 8 }, () => Array(8).fill(null))
+    }
+
+    criar_tabuleiro() {
+        for(let i = 0; i < 8; i++) {
+            const coluna = document.createElement("div")
+            coluna.className = `coluna ${tabuleiro.colunas[i]}`
+            for(let j = 0; j < 8; j++) {
+                const linha = document.createElement("div")
+                linha.className = `linha ${tabuleiro.linhas[j]}`
+                linha.dataset.linha = j
+                linha.dataset.coluna = i
+                coluna.appendChild(linha)
+                this.casas[j][i] = linha
+            }
+            this.container.appendChild(coluna)
+        }
+    }
+
+    pintar_tabuleiro() {
+        for(let i = 0; i < 8; i++) {
+            for(let j = 0; j < 8; j++) {
+                this.casas[i][j].classList.add((i+j) % 2 === 0 ? "b": "c")
+            }
+        }
+    }
+    
+    desenhar_pecas(estado) {
+        for(let l = 0; l < 8; l++) {
+            for(let c = 0; c < 8; c++) {
+                const peca = estado[l][c]
+                this.casas[l][c].innerHTML = peca ? `<span class="peca ${peca}"></span>` : ""
+            }
         }
     }
 }
 
-// coloca as classes nas divs
-function pintar_tabuleiro() {
-    for(let i=0; i < 8; i++) {
-        const coluna_atual = document.getElementsByClassName(`${tabuleiro.colunas[i]}`)[0]
-        // nas linhas pares, pinta as casas pares de branco
-        if(i % 2 === 0) {
-            for(let j = 0; j < tabuleiro.linhas.length; j = j + 2) {
-                const linha_atual = coluna_atual.getElementsByClassName(`${tabuleiro.linhas[j]}`)[0]
-                linha_atual.classList.add("b")
-            }
-            for(let j = 1; j < tabuleiro.linhas.length; j = j + 2) {
-                const linha_atual = coluna_atual.getElementsByClassName(`${tabuleiro.linhas[j]}`)[0]
-                linha_atual.classList.add("c")
-            }
-        }
-        // nas linhas impares, pinta as casas pares de cinza
-        else {
-            for(let j = 0; j < tabuleiro.linhas.length; j = j + 2) {
-                const linha_atual = coluna_atual.getElementsByClassName(`${tabuleiro.linhas[j]}`)[0]
-                linha_atual.classList.add("c")
-            }
-            for(let j = 1; j < tabuleiro.linhas.length; j = j + 2) {
-                const linha_atual = coluna_atual.getElementsByClassName(`${tabuleiro.linhas[j]}`)[0]
-                linha_atual.classList.add("b")
-            }
-        }
-    }
-}
+const jogo = new Jogo;
+const tela = new Tela(document_tabuleiro);
 
-// criar peças dois times
-function criar_times() {
-    // time a
-    for(let i = 0; i <= 7; i++) {
-        const coluna_atual = document.getElementsByClassName(`${tabuleiro.colunas[i]}`)[0]
-        // se for par
-        if(i % 2 === 0) {
-            // coloca as peças nas casas impares até a 3
-            for(let j = 1; j <= 2; j = j = j+2) {
-                const linha_atual = coluna_atual.getElementsByClassName(`${tabuleiro.linhas[j]}`)[0]
-                linha_atual.innerHTML = `<span class="peca b"></span>`
-            }            
-        }
-        // se for impar
-        else {
-            // coloca as peças nas casas pares até a 3
-            for(let j = 0; j <= 2; j = j = j+2) {
-                const linha_atual = coluna_atual.getElementsByClassName(`${tabuleiro.linhas[j]}`)[0]
-                linha_atual.innerHTML = `<span class="peca b"></span>`
-            } 
-        }
-
-    }
-
-    // time b
-    for(let i = 0; i <= 7; i++) {
-        const coluna_atual = document.getElementsByClassName(`${tabuleiro.colunas[i]}`)[0]
-        // se for par
-        if(i % 2 === 0) {
-            // coloca as peças nas casas impares até a 3
-            for(let j = 7; j >= 5; j = j-2) {
-                const linha_atual = coluna_atual.getElementsByClassName(`${tabuleiro.linhas[j]}`)[0]
-                linha_atual.innerHTML = `<span class="peca a"></span>`
-            }            
-        }
-        // se for impar
-        else {
-            // coloca as peças nas casas pares de 7   
-            for(let j = 6; j >= 5; j = j-2) {
-                const linha_atual = coluna_atual.getElementsByClassName(`${tabuleiro.linhas[j]}`)[0]
-                linha_atual.innerHTML = `<span class="peca a"></span>`
-            } 
-        }
-
-    }
-}
-
-// cria tabuleiro, pinta e invoca peças
 function iniciar() {
-    criar_tabuleiro();
-    pintar_tabuleiro();
-    criar_times();
+    tela.criar_tabuleiro();
+    tela.pintar_tabuleiro();
+    tela.desenhar_pecas(jogo.estado)
 }
 
-iniciar()
+iniciar();
 
 let ultima_peca_clicada = null
 let time_a_jogar = "a"
 
 document_tabuleiro.addEventListener('click', function(event) {
     // se for peça, pinta os movimentos possiveis
-    if(event.target.classList.contains("peca") &&
-        event.target.classList.contains(`${time_a_jogar}`)) 
-        {
-            ultima_peca_clicada = event.target
+    if(event.target.classList.contains("peca")) {
 
-            const document_linha_atual = event.target.parentElement
-            const document_coluna_atual = event.target.parentElement.parentElement
+        ultima_peca_clicada = event.target
 
-            const linha_atual = document_linha_atual.classList[1]
-            const coluna_atual = document_coluna_atual.classList[1]
+        const document_linha_atual = event.target.parentElement
+        const document_coluna_atual = event.target.parentElement.parentElement
 
-            console.log(event.target.classList.contains(`${time_a_jogar}`))
+        const linha_atual = document_linha_atual.classList[1]
+        const coluna_atual = document_coluna_atual.classList[1]
 
-            //movimentação peca time A
-            if(time_a_jogar === "a") {
-                placeholder(linha_atual, coluna_atual, times.time_a)
-            }
-            //movimentação peca time B
-            if(time_a_jogar === "b") {
-                placeholder(linha_atual, coluna_atual, times.time_b)
-            }
-
-        } // mover peça 
-            else if (event.target.classList.contains("selecionada")) {
-
-                // coloca a peca no local novo
-                event.target.innerHTML += `<span class="peca ${String(time_a_jogar)}"></span>`
-
-                // limpa filtro vermelho
-                const tabuleiro_atual = event.target.parentElement.parentElement
-                const espacos_selecionados = tabuleiro_atual.getElementsByClassName("selecionada")
-                for(let i = 0; i <= espacos_selecionados.length ; i++) {
-                    // eu não acredito nisso que eu fiz
-                    espacos_selecionados[i - i].classList.remove("selecionada")
-                }
-
-                // remove peça do local antigo
-                ultima_peca_clicada.parentElement.innerHTML = ""
-
-                if(time_a_jogar === "a") {
-                    time_a_jogar = "b"
-                } else {
-                    time_a_jogar = "a"
-                }
-            
+        //movimentação peca time A
+        if(time_a_jogar === "a") {
+            placeholder(linha_atual, coluna_atual, times.time_a)
         }
+        //movimentação peca time B
+        if(time_a_jogar === "b") {
+            placeholder(linha_atual, coluna_atual, times.time_b)
+        }
+
+    } // mover peça 
+    else if (event.target.classList.contains("selecionada")) {
+
+        // coloca a peca no local novo
+        event.target.innerHTML += `<span class="peca ${String(time_a_jogar)}"></span>`
+
+        // limpa filtro vermelho
+        const tabuleiro_atual = event.target.parentElement.parentElement
+        const espacos_selecionados = tabuleiro_atual.getElementsByClassName("selecionada")
+        for(let i = 0; i <= espacos_selecionados.length ; i++) {
+            // eu não acredito nisso que eu fiz
+            espacos_selecionados[i - i].classList.remove("selecionada")
+        }
+
+        // remove peça do local antigo
+        ultima_peca_clicada.parentElement.innerHTML = ""
+        
+    }
 
 })
 
